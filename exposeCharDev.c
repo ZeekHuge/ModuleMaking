@@ -4,7 +4,8 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h>
 #include <linux/device.h>
-
+#include <linux/of.h>
+#include <linux/gpio.h>
 /**********************************/
 /**********************************/
 
@@ -36,7 +37,7 @@ static int majorNumber;
 static int isOpened = 0;
 static struct class* myClass = NULL;
 static struct device* myDevice = NULL;
-
+static int gpioWasClaimed = 0;
 
 /**********************************/
 /* The structure the define operations on file (usually called fops) */
@@ -76,7 +77,7 @@ static int fileBeingOpend (struct inode *node, struct file *fl){
 		isOpened = 1;
 		printk(KERN_ALERT "File openend\n");
 	}else{
-		printk(KERN_ALERT "Trying to open already openend file\n");
+		printk(KERN_ALERT "Tried to open already openend file\n");
 	}
 	return 0;
 }
@@ -93,7 +94,12 @@ static ssize_t fileBeingRead (struct file *fl, char __user *bffr, size_t len, lo
 /**********************************/
 
 static ssize_t fileBeingWritten (struct file *fl,const char __user *bffr, size_t len, loff_t * off){
-	printk(KERN_ALERT "File write operation");
+	printk(KERN_ALERT "File write operation - %c",*bffr);
+	if (((int)*bffr - (int)'0') > 0){
+		gpio_set_value(53, 1);
+	}else{
+		gpio_set_value(53,0);
+	}
 	return len;
 }
 
@@ -108,8 +114,22 @@ static ssize_t fileBeingWritten (struct file *fl,const char __user *bffr, size_t
 
 static int __init exposeCharDev_module(void){
 	
+	int err;
 	printk(KERN_INFO "exposeCharDev loaded\n");
 
+	printk(KERN_ALERT "requesting gpio");
+ 	err = gpio_request_one(53,GPIOF_INIT_HIGH,"zeek_gpio");
+
+	if ( err > 0)
+	{
+		gpioWasClaimed=0;
+		printk(KERN_ALERT "gpio busy");
+		return 0;
+	}
+
+	printk(KERN_ALERT "gpio claimed");
+
+	
 	majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
 
 	if (majorNumber < 0){
@@ -144,11 +164,16 @@ static int __init exposeCharDev_module(void){
 
 static void __exit cleanup_exposeCharDev(void){
 
+	if (gpioWasClaimed){
+		gpio_free(53);
+	}
+	
 	printk(KERN_INFO "exposeCharDev rmmod-ed\n");
-	unregister_chrdev(majorNumber, DEVICE_NAME);
-	// if (err < 0){
-	// 	printk(KERN_ALERT "Couldnt unregister");
-	// }
+	device_destroy(myClass, MKDEV(majorNumber, 0));   
+   	class_unregister(myClass);                         
+   	class_destroy(myClass);                            
+   	unregister_chrdev(majorNumber, DEVICE_NAME);
+	
 
 }
 
