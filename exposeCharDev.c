@@ -92,7 +92,7 @@ static ssize_t fileBeingRead (struct file *fl, char __user *bffr, size_t len, lo
 /**********************************/
 /**********************************/
 
-static ssize_t fileBeingWritten (struct file *fl,const char __usr *bffr, size_t len, loff_t * off){
+static ssize_t fileBeingWritten (struct file *fl,const char __user *bffr, size_t len, loff_t * off){
 	printk(KERN_ALERT "File write operation");
 	return len;
 }
