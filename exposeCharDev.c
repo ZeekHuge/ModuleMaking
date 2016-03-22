@@ -76,7 +76,7 @@ static int fileBeingOpend (struct inode *node, struct file *fl){
 		isOpened = 1;
 		printk(KERN_ALERT "File openend\n");
 	}else{
-		printk(KERN_ALERT "Tried to open already openend file\n");
+		printk(KERN_ALERT "Trying to open already openend file\n");
 	}
 	return 0;
 }
