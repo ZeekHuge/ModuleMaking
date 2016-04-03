@@ -28,11 +28,11 @@ static short parm_short = 2;
 static char* parm_string = "foo_string";
 
 module_param(parm_int,int,0000);
-MODULE_PARM_DESC(parm_int, "An intger");
+MODULE_PARM_DESC(parm_int, "An intger parameter");
 module_param(parm_short, short,0000);
-MODULE_PARM_DESC(parm_short, "A short intger");
+MODULE_PARM_DESC(parm_short, "A short intger parameter");
 module_param(parm_string,charp,0000);
-MODULE_PARM_DESC(parm_string, "A string");
+MODULE_PARM_DESC(parm_string, "A string parameter");
 
 static int __init init_hello(void)
 {
