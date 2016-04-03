@@ -1,1 +1,0 @@
-cmd_/home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/Hello.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/Hello.ko /home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/Hello.o /home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/Hello.mod.o

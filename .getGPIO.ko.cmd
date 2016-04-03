@@ -1,1 +1,0 @@
-cmd_/home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/getGPIO.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/getGPIO.ko /home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/getGPIO.o /home/zeekhuge/Desktop/Projects/OpenSource/ModuleMaking/getGPIO.mod.o
