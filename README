@@ -1,0 +1,11 @@
+
+The loadable modules in this directory are developed by my, while learning the kernel programming.
+
+To build the modules:
+	1. If your kernel headers source is installed at '/lib/modules/$(shell uname -r)/build', the build command will be :
+
+			$make 
+
+	2. If your kernel headers source is installed at some other location, the build command will be :
+
+			$ KDIR=/path/to/source make
