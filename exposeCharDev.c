@@ -1,3 +1,4 @@
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -6,32 +7,14 @@
 #include <linux/device.h>
 #include <linux/of.h>
 #include <linux/gpio.h>
-/**********************************/
-/**********************************/
 
 #define DEVICE_NAME "theCharDev"
 #define CLASS_NAME "myClass"
 
-#define AUTHOR	"ZeekHuge"
-#define DESC 	"Exposes a character device /dev/theCharDev"
-
-
-/**********************************/
-/* These functions will be called when operations are performed on the device file */
-/**********************************/
-
-static int fileBeingReleased (struct inode *, struct file *);
-static int fileBeingOpend (struct inode *, struct file *);
-static ssize_t fileBeingRead (struct file *, char __user *, size_t, loff_t *);
-static ssize_t fileBeingWritten (struct file *, const char __user *, size_t, loff_t *);
-
-/**********************************/
-/**********************************/
-
-
-/**********************************/
-/* Global data */
-/**********************************/
+static int fileBeingReleased(struct inode *, struct file *);
+static int fileBeingOpend(struct inode *, struct file *);
+static ssize_t fileBeingRead(struct file *, char __user *, size_t, loff_t *);
+static ssize_t fileBeingWritten(struct file *, const char __user *, size_t, loff_t *);
 
 static int majorNumber;
 static int isOpened = 0;
@@ -39,25 +22,13 @@ static struct class* myClass = NULL;
 static struct device* myDevice = NULL;
 static int gpioWasClaimed = 0;
 
-/**********************************/
-/* The structure the define operations on file (usually called fops) */
-/**********************************/
-
 static struct file_operations fops =
 {
-	.read = fileBeingRead,
-	.write = fileBeingWritten,
-	.open = fileBeingOpend,
-	.release = fileBeingReleased
+	.read 		= fileBeingRead,
+	.write 		= fileBeingWritten,
+	.open 		= fileBeingOpend,
+	.release 	= fileBeingReleased
 };
-
-/**********************************/
-/**********************************/
-
-
-/**********************************/
-/* Defination of fops functions */
-/**********************************/
 
 static int fileBeingReleased (struct inode *node, struct file *fl){
 
@@ -103,25 +74,16 @@ static ssize_t fileBeingWritten (struct file *fl,const char __user *bffr, size_t
 	return len;
 }
 
-/**********************************/
-/**********************************/
-
-
-
-
-/**********************************/
-/**********************************/
-
-static int __init exposeCharDev_module(void){
+static int __init exposeCharDev_module(void)
+{
 	
 	int err;
 	printk(KERN_INFO "exposeCharDev loaded\n");
-
 	printk(KERN_ALERT "requesting gpio");
+ 	
  	err = gpio_request_one(53,GPIOF_INIT_HIGH,"zeek_gpio");
 
-	if ( err > 0)
-	{
+	if ( err > 0){
 		gpioWasClaimed=0;
 		printk(KERN_ALERT "gpio busy");
 		return 0;
@@ -129,7 +91,6 @@ static int __init exposeCharDev_module(void){
 
 	printk(KERN_ALERT "gpio claimed");
 
-	
 	majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
 
 	if (majorNumber < 0){
@@ -138,31 +99,30 @@ static int __init exposeCharDev_module(void){
 	}
 
 	myClass = class_create(THIS_MODULE, CLASS_NAME);
+
 	if (IS_ERR(myClass)){
-      unregister_chrdev(majorNumber, DEVICE_NAME);
-      printk(KERN_ALERT "Failed to create the device\n");
-      return PTR_ERR(myClass);
+		unregister_chrdev(majorNumber, DEVICE_NAME);
+      		printk(KERN_ALERT "Failed to create the device\n");
+      		return PTR_ERR(myClass);
    	}
 
    	myDevice = device_create(myClass, NULL, MKDEV(majorNumber, 0), NULL, DEVICE_NAME);
+	
 	if (IS_ERR(myDevice)){
-      class_destroy(myClass); 
-      unregister_chrdev(majorNumber, DEVICE_NAME);
-      printk(KERN_ALERT "Failed to create the device\n");
-      return PTR_ERR(myDevice);
+		class_destroy(myClass); 
+      		unregister_chrdev(majorNumber, DEVICE_NAME);
+      		printk(KERN_ALERT "Failed to create the device\n");
+      		return PTR_ERR(myDevice);
    	}
-
 
    	printk(KERN_ALERT "Registration done - %d",majorNumber);
 
 	return 0;
 }
+module_init(exposeCharDev_module);
 
-
-/**********************************/
-/**********************************/
-
-static void __exit cleanup_exposeCharDev(void){
+static void __exit cleanup_exposeCharDev(void)
+{
 
 	if (gpioWasClaimed){
 		gpio_free(53);
@@ -173,17 +133,14 @@ static void __exit cleanup_exposeCharDev(void){
    	class_unregister(myClass);                         
    	class_destroy(myClass);                            
    	unregister_chrdev(majorNumber, DEVICE_NAME);
-	
-
 }
-
-/**********************************/
-/**********************************/
-
-
-module_init(exposeCharDev_module);
 module_exit(cleanup_exposeCharDev);
-MODULE_LICENSE("GPL"); /* Not sure what GPL license is about */
-MODULE_AUTHOR(AUTHOR);
-MODULE_DESCRIPTION(DESC);
-MODULE_SUPPORTED_DEVICE("No device");
+
+
+
+
+
+
+MODULE_LICENSE("GPL v2");
+MODULE_AUTHOR("ZeekHuge");
+

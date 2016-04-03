@@ -1,6 +1,3 @@
-/*
-* Driver to request iomem-ed gpio location 
-*/
 
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -9,8 +6,6 @@
 #include <linux/of.h>
 #include <linux/gpio.h>
 
-#define AUTHOR	"ZeekHuge"
-#define DESC 	"Requests the iomem-ed gpio location"
 
 static int gpioWasClaimed = 1;
 static int err =0 ;
@@ -31,8 +26,8 @@ static int __init gpio_module(void)
 
 	printk(KERN_ALERT "gpio claimed");
 	return 0;
-
 }
+module_init(gpio_module);
 
 static void __exit cleanup_gpio(void)
 {
@@ -44,10 +39,10 @@ static void __exit cleanup_gpio(void)
 	
 	printk(KERN_ALERT "Leaving");
 }
-
-module_init(gpio_module);
 module_exit(cleanup_gpio);
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR(AUTHOR);
-MODULE_DESCRIPTION(DESC);
-MODULE_SUPPORTED_DEVICE("No device");
+
+
+
+MODULE_LICENSE("GPL v2");
+MODULE_AUTHOR("ZeekHuge");
+MODULE_DESCRIPTION("");
