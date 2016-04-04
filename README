@@ -1,6 +1,13 @@
 
 The loadable modules in this directory are developed by me, while learning the kernel programming.
 
+
+
+/************************************************************************************/
+/************************************************************************************/
+
+
+
 The kernel module "Hello.ko":
 
 	This kernel module is an introductory kernel module. 	
@@ -10,31 +17,44 @@ The kernel module "Hello.ko":
  	Further, the module when unloaded, it will print "Goodbye World" 
  	to the debug level kernel log.
 
+
+
 /************************************************************************************/
+/************************************************************************************/
+
+
 
 To build the modules:
-	1. If your kernel headers source is installed at '/lib/modules/$(shell uname -r
-	/build', the build command will be :
+1. If your kernel headers source is installed at '/lib/modules/$(shell uname -r
+/build', the build command will be :
+	$make 
 
-			$make 
+2. If your kernel headers source is installed at some other location, the build command
+will be :
+	$ KDIR=/path/to/source make
 
-	2. If your kernel headers source is installed at some other location, the build command
-	will be :
 
-			$ KDIR=/path/to/source make
 
 /************************************************************************************/
+/************************************************************************************/
+
+
 
 
 To see the parameteres to be passed to the module and other details:
-	modinfo <module_name.ko>
+	$modinfo <module_name.ko>
+
+
 
 
 /************************************************************************************/
+/************************************************************************************/
+
+
 
 To insert module:
-	1. Without passing any arguments:
-		insmod <module_name.ko>
+1. Without passing any arguments:
+	$insmod <module_name.ko>
 
-	2. Passing arguments to the module
-		insmod <module_name.ko> parameter_1=value_1 parameter_2=value_2 .......
+2. Passing arguments to the module
+	$insmod <module_name.ko> parameter_1=value_1 parameter_2=value_2 .......
